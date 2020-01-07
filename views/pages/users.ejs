@@ -1,0 +1,120 @@
+<%- contentFor('content') %>
+
+<% include ../partials/datatablecss %>
+<section class="section-container">
+    <!-- Page content-->
+    <div class="content-wrapper">
+        <div class="content-heading">
+            <div>Users</div>
+        </div>
+        <div class="container-fluid">
+            <!-- DATATABLE DEMO 1-->
+            <div class="card">
+                <div class="card-header">
+                </div>
+                <div class="card-body">
+                    <table class="table my-4 w-100" id="datatable1">
+                    <thead>
+                        <tr class="center-text">
+                            <th>S/N</th>
+                            <th>Player Name</th>
+                            <th>Cat name</th>
+                            <th>Gender</th>
+                            <th>Phone Number</th>
+                            <th>Email address</th>
+                            <th>Sign up date/time</th>
+                            <th>Last game played date/time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(function(user){ %>
+                        <tr class="<%= user.suspend == 0 ? '' : 'suspended'%>">
+                            <td><%=user.Id%></td>
+                            <td><%=user.Name%></td>
+                            <td>BBB</td>
+                            <td><%=user.Gender%></td>
+                            <td><%=user.PhoneNumber%></td>
+                            <td><%= typeof(user.Email) != 'undefined' ? user.Email : 'abc@gmail.com'%></td>
+                            <td><%= typeof(user.signUpTime) != 'undefined' ? moment(user.signUpTime).format('DD/MM/YYYY hh:mm') : '01/01/2019 12:00'%></td>
+                            <td><%= typeof(user.lastGamePlayedTime) != 'undefined' ? moment(user.lastGamePlayedTime).format('DD/MM/YYYY hh:mm') : '01/01/2020 00:00'%></td>
+                            <td><button onclick="changeUserSuspendStatus('<%=user.Id%>', '<%=user.suspend%>')" class="btn btn-danger"><%=user.suspend == 0 ? 'Suspend' : 'Unsuspend' %></button></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% include ../partials/datatablejs %>
+<script>
+    function changeUserSuspendStatus(idUser, suspend){
+        if(suspend == 1){
+            title = "Unsuspend"
+            text = "User can login to game after unsuspend."
+        }else{
+            title = "Suspend"
+            text = "User cannot login to game after suspend."
+        }
+        swal({
+            title: 'Do you want to ' + title + ' this user?',
+            text: text,
+            icon: 'warning',
+            buttons: {
+                cancel: {
+                    text: 'No, cancel.',
+                    value: null,
+                    visible: true,
+                    className: "",
+                    closeModal: true
+                },
+                confirm: {
+                    text: 'Yes, procceed.',
+                    value: true,
+                    visible: true,
+                    className: "bg-danger",
+                    closeModal: false
+                }
+            }
+        }).then(function(isConfirm) {
+            if(isConfirm) {
+                $.ajax({
+                    url:  '/cms/users/changestatus',
+                    method:'post',
+                    dataType: 'json',
+                    data: {
+                        id_user: idUser,
+                        suspend: suspend
+                    },
+                    success: function(data){
+                        switch (data.code) {
+                            case 1:
+                                swal({
+                                    title: 'Successfull',
+                                    text: title + ' user successfully.',
+                                    icon: 'success',
+                                }).then(function() {
+                                    window.location.reload();
+                                });
+                                break;
+                            
+                            default:
+                                swal({
+                                    title: 'Error',
+                                    text: data.message,
+                                    icon: 'warning'
+                                })
+                                console.error(data.message);
+                                break;
+                        }
+                    },
+                    error:function(data){
+                        console.error(data);
+                    }
+                });
+            }
+        });
+    }
+</script>

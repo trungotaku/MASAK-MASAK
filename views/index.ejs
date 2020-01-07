@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <meta name="description" content="Masak Masak CMS">
+   <meta name="keywords" content="app, responsive, jquery, bootstrap, dashboard, admin">
+   <link rel="icon" type="image/x-icon" href="favicon.ico">
+   <title>Masak Masak CMS</title><!-- =============== VENDOR STYLES ===============-->
+   <% include ./partials/css %>
+
+   <script src="/vendor/jquery/dist/jquery.js"></script>
+</head>
+
+<body>
+   <div class="wrapper">
+      <% include ./partials/header %>
+      <% include ./partials/sidebar %>
+      
+         <!-- Page content-->
+      <%-defineContent('content')%>
+      <!-- Page footer-->
+      <footer class="footer-container"><span>&copy; 2020 - Masak Masak</span></footer>
+   </div><!-- =============== VENDOR SCRIPTS ===============-->
+   <% include ./partials/js %>
+</body>
+
+</html>
